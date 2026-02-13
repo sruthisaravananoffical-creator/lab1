@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>To Do List</title>
+    <style>
+        body {
+            font-family: Times New Roman, sans-serif;
+            max-width: 500px;
+            margin: 30px auto;
+            padding: 10px;
+        }
+        textarea {
+            width: 100%;
+            height: 25px;
+            margin: 10px 0;
+            padding: 3px 5px;
+            font size: 14px
+        }
+        button {
+            margin-right: 5px;
+            padding: 5px 15px;
+        }
+        ol {
+            padding-left: 20px;
+        }
+        li {
+            margin: 5px 0;
+            cursor: pointer;
+        }
+        .red { color: red; }
+        .black { color: black; }
+        .grey { color: grey; }
+        .completed {
+            text-decoration: line-through;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+<h3>To do List</h3>
+<h4 style="color:green;"><i>Enter and delete tasks accordingly.</i></h4>
+
+<textarea id="input" placeholder="Task, Category (1/2/3). Use ';' for entering multiple tasks"></textarea>
+<br>
+<button onclick="addTask()">Add</button>
+<button onclick="toggleView()">Toggle</button>
+
+<ol id="list">
+    <li class="black">Dinner with friends</li>
+    <li class="red">Assignment 1</li>
+    <li class="grey">Prepare for Lecture</li>
+</ol>
+
+<script>
+let hideCompleted = false;
+
+// Setup existing tasks
+let items = document.querySelectorAll("#list li");
+for (let i = 0; i < items.length; i++) {
+    items[i].onclick = function() { this.classList.toggle("completed"); };
+    items[i].ondblclick = function() { 
+        if (confirm("Delete?")) this.remove(); 
+    };
+}
+
+function addTask() {
+    let input = document.getElementById("input").value.trim();
+    if (!input) return;
+    
+    let tasks = input.split(";");
+    
+    for (let i = 0; i < tasks.length; i++) {
+        let parts = tasks[i].trim().split(",");
+        if (parts.length !== 2) continue;
+        
+        let text = parts[0].trim();
+        let category = parts[1].trim();
+        
+        let li = document.createElement("li");
+        li.innerHTML = text;
+        
+        if (category === "1") li.className = "red";
+        else if (category === "2") li.className = "black";
+        else if (category === "3") li.className = "grey";
+        
+        li.onclick = function() { this.classList.toggle("completed"); };
+        li.ondblclick = function() { 
+            if (confirm("Delete?")) this.remove(); 
+        };
+        
+        document.getElementById("list").appendChild(li);
+    }
+    
+    document.getElementById("input").value = "";
+}
+
+function toggleView() {
+    hideCompleted = !hideCompleted;
+    let all = document.querySelectorAll("#list li");
+    
+    for (let i = 0; i < all.length; i++) {
+        if (all[i].classList.contains("completed")) {
+            if (hideCompleted) all[i].classList.add("hidden");
+            else all[i].classList.remove("hidden");
+        }
+    }
+}
+</script>
+
+</body>
+</html>
