@@ -1,126 +1,111 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title> To Do List</title>
-
-<style>
-body {
-    font-family: Arial, sans-serif;
-    max-width: 600px;
-    margin: 40px auto;
-}
-
-textarea {
-    width: 100%;
-    height: 70px;
-}
-
-button {
-    margin-top: 10px;
-    margin-right: 10px;
-}
-
-.red { color: red; }
-.black { color: black; }
-.grey { color: grey; }
-
-.completed {
-    text-decoration: line-through;
-}
-
-.hidden {
-    display: none;
-}
-</style>
+    <title>To Do List</title>
+    <style>
+        body {
+            font-family: Times New Roman, sans-serif;
+            max-width: 500px;
+            margin: 30px auto;
+            padding: 10px;
+        }
+        textarea {
+            width: 1400%;
+            height: 60px;
+            margin: 10px 0;
+            padding: 5px;
+        }
+        button {
+            margin-right: 5px;
+            padding: 5px 15px;
+        }
+        ol {
+            padding-left: 20px;
+        }
+        li {
+            margin: 5px 0;
+            cursor: pointer;
+        }
+        .red { color: red; }
+        .black { color: black; }
+        .grey { color: grey; }
+        .completed {
+            text-decoration: line-through;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
 </head>
-
 <body>
 
-<h2>ToDo List</h2>
-<h3>Please enter or delete the tasks according to schedule. </h3>
-<br>
-<textarea id="input" placeholder="Task content, category (1/2/3)
-Separate multiple tasks with ;"></textarea>
-<br>
+<h3>To do List</h3>
+<h4 style="color:green;"><i>Enter and delete tasks accordingly.</i></h4>
 
-<button onclick="addTask()">ADD</button>
-<button onclick="toggleCompleted()">TOGGLE</button>
+<textarea id="input" placeholder="Task, Category (1/2/3). Use ';' for entering multiple tasks"></textarea>
+<br>
+<button onclick="addTask()">Add</button>
+<button onclick="toggleView()">Toggle</button>
 
 <ol id="list">
-    <!-- Predefined tasks -->
     <li class="black">Dinner with friends</li>
     <li class="red">Assignment 1</li>
-    <li class="grey">Prepare for Lecture : Web Server</li>
+    <li class="grey">Prepare for Lecture</li>
 </ol>
 
 <script>
 let hideCompleted = false;
 
-// Attach click and double-click events to existing tasks
-function attachEvents(li) {
-    // single click → complete/resume
-    li.onclick = function () {
-        li.classList.toggle("completed");
-        if (hideCompleted && li.classList.contains("completed")) {
-            li.classList.add("hidden");
-        } else {
-            li.classList.remove("hidden");
-        }
-    };
-
-    // double click → delete (with confirm)
-    li.ondblclick = function () {
-        if (confirm("Delete this task?")) {
-            li.remove();
-        }
+// Setup existing tasks
+let items = document.querySelectorAll("#list li");
+for (let i = 0; i < items.length; i++) {
+    items[i].onclick = function() { this.classList.toggle("completed"); };
+    items[i].ondblclick = function() { 
+        if (confirm("Delete?")) this.remove(); 
     };
 }
 
-// Attach events to predefined tasks
-document.querySelectorAll("#list li").forEach(attachEvents);
-
 function addTask() {
-    const input = document.getElementById("input").value.trim();
+    let input = document.getElementById("input").value.trim();
     if (!input) return;
-
-    const tasks = input.split(";");
-
-    tasks.forEach(task => {
-        const parts = task.split(",");
-        if (parts.length !== 2) return;
-
-        const content = parts[0].trim();
-        const category = parts[1].trim();
-
-        const li = document.createElement("li");
-        li.textContent = content;
-
-        if (category === "1") li.classList.add("red");
-        else if (category === "2") li.classList.add("black");
-        else if (category === "3") li.classList.add("grey");
-
-        attachEvents(li);
+    
+    let tasks = input.split(";");
+    
+    for (let i = 0; i < tasks.length; i++) {
+        let parts = tasks[i].trim().split(",");
+        if (parts.length !== 2) continue;
+        
+        let text = parts[0].trim();
+        let category = parts[1].trim();
+        
+        let li = document.createElement("li");
+        li.innerHTML = text;
+        
+        if (category === "1") li.className = "red";
+        else if (category === "2") li.className = "black";
+        else if (category === "3") li.className = "grey";
+        
+        li.onclick = function() { this.classList.toggle("completed"); };
+        li.ondblclick = function() { 
+            if (confirm("Delete?")) this.remove(); 
+        };
+        
         document.getElementById("list").appendChild(li);
-    });
-
+    }
+    
     document.getElementById("input").value = "";
 }
 
-function toggleCompleted() {
+function toggleView() {
     hideCompleted = !hideCompleted;
-    const items = document.querySelectorAll("#list li");
-
-    items.forEach(item => {
-        if (item.classList.contains("completed")) {
-            if (hideCompleted) {
-                item.classList.add("hidden");
-            } else {
-                item.classList.remove("hidden");
-            }
+    let all = document.querySelectorAll("#list li");
+    
+    for (let i = 0; i < all.length; i++) {
+        if (all[i].classList.contains("completed")) {
+            if (hideCompleted) all[i].classList.add("hidden");
+            else all[i].classList.remove("hidden");
         }
-    });
+    }
 }
 </script>
 
